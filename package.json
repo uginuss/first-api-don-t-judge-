@@ -1,0 +1,19 @@
+{
+  "name": "apishnik",
+  "version": "1.0.0",
+  "description": "first api.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uginuss/first-api-don-t-judge-.git"
+  },
+  "author": "ugin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/uginuss/first-api-don-t-judge-/issues"
+  },
+  "homepage": "https://github.com/uginuss/first-api-don-t-judge-#readme"
+}
