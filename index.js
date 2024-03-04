@@ -21,10 +21,47 @@ const server=http.createServer((req, res) =>{
     }
 
 
+    if(req.url.startsWith('/like')){
+
+        like(req, res);
+    }
+
+
 
 
 });
 server.listen(3000);
+
+function like(req, res){
+    let dir=fs.readdirSync(datapath);
+
+    const url=require('url');
+    const params=url.parse(req.url, true).query;
+    let id=params.id;
+    console.log(id);
+
+    if(id){
+        if(id>dir.length){
+            res.end('такого айди нема');
+        }else{
+            let filepath=path.join(datapath, id+'.json');
+            let file=fs.readFileSync(filepath);
+            let jokejson=Buffer.from(file).toString();
+            let joke=JSON.parse(jokeJSON);
+
+            joke.likes++;
+
+            fs.writeFileSync(filepath, JSON.stringify(joke));
+            res.end(`вы лайкнули шутку номер....${id}`);
+        }
+    }
+
+
+
+};
+
+
+
 
 
 function addjoke(req, res){
