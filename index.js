@@ -5,9 +5,12 @@ let url=require("url");
 let http=require("http");
 
 let datapath=path.join(__dirname, "data");
+let htmlpath=path.join(__dirname, 'index.html');
+let htmlshow=fs.readFileSync(htmlpath);
 
 
 const server=http.createServer((req, res) =>{
+    res.setHeader('Access-Control-Allow-Origin', '*');
 
     if(req.url=="/addjoke"&&req.method=="POST"){
 
@@ -27,10 +30,33 @@ const server=http.createServer((req, res) =>{
     }
 
 
+    if(req.url.startsWith('/dislike')){
+
+        dislike(req, res);
+    }
+
+
+    if(req.url.startsWith('/html')){
+
+        drawhtml(req, res);
+    }
+
+
+
 
 
 });
 server.listen(3000);
+
+
+
+
+
+
+
+
+
+
 
 function like(req, res){
     let dir=fs.readdirSync(datapath);
@@ -40,20 +66,62 @@ function like(req, res){
     let id=params.id;
     console.log(id);
 
-    if(id){
+    if(id&&req.method=="POST"){
         if(id>dir.length){
             res.end('такого айди нема');
         }else{
             let filepath=path.join(datapath, id+'.json');
             let file=fs.readFileSync(filepath);
             let jokejson=Buffer.from(file).toString();
-            let joke=JSON.parse(jokeJSON);
+            let joke=JSON.parse(jokejson);
 
             joke.likes++;
 
             fs.writeFileSync(filepath, JSON.stringify(joke));
             res.end(`вы лайкнули шутку номер....${id}`);
         }
+    }else if(id&&req.method=="GET"&&id>dir.length){
+        let filepath=path.join(datapath, id+'.json');
+        let file=fs.readFileSync(filepath);
+        let jokejson=Buffer.from(file).toString();
+        let joke=JSON.parse(jokejson);
+
+        res.end(`у шутки номер ${id}, ${joke.likes} лайков`);
+    }else{
+        res.end('ошибка')
+    }
+};
+function dislike(req, res){
+    let dir=fs.readdirSync(datapath);
+
+    const url=require('url');
+    const params=url.parse(req.url, true).query;
+    let id=params.id;
+    console.log(id);
+
+    if(id&&req.method=="POST"){
+        if(id>dir.length){
+            res.end('такого айди нема');
+        }else{
+            let filepath=path.join(datapath, id+'.json');
+            let file=fs.readFileSync(filepath);
+            let jokejson=Buffer.from(file).toString();
+            let joke=JSON.parse(jokejson);
+
+            joke.dislikes++;
+
+            fs.writeFileSync(filepath, JSON.stringify(joke));
+            res.end(`вы дизлайкнули шутку номер....${id}`);
+        }
+    }else if(id&&req.method=="GET"&&id>dir.length){
+        let filepath=path.join(datapath, id+'.json');
+        let file=fs.readFileSync(filepath);
+        let jokejson=Buffer.from(file).toString();
+        let joke=JSON.parse(jokejson);
+
+        res.end(`у шутки номер ${id}, ${joke.dislikes} дизлайков`);
+    }else{
+        res.end('ошибка')
     }
 
 
